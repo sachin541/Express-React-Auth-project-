@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function VerifyOtp() {
-  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState(null);
+  const { verifyOtp, emailForVerification } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp });
-      navigate('/login');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to verify OTP');
-      console.error('Failed to verify OTP', err);
+    const { user, error } = await verifyOtp(emailForVerification, otp);
+    if (error) {
+      setError(error);
+    } else {
+      navigate('/'); // Redirect to home after successful verification
     }
   };
 
@@ -25,15 +22,6 @@ function VerifyOtp() {
     <form onSubmit={handleSubmit}>
       <h2>Verify OTP</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <label>
-        Email:
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
       <label>
         OTP:
         <input
@@ -49,3 +37,4 @@ function VerifyOtp() {
 }
 
 export default VerifyOtp;
+

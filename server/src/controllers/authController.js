@@ -18,10 +18,10 @@ const sendOtpEmail = async (email, otp) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending OTP email:', error);
-                reject('Error sending OTP email');
+                resolve('Error sending OTP email'); //change back to reject
             } else {
                 console.log('OTP email sent:', info.response);
-                resolve('OTP sent to email. Please check your email to verify your account.');
+                resolve('OTP sent to email.');
             }
         });
     });
@@ -161,6 +161,7 @@ async function verifyOtp(req, res) {
 
         // Delete the OTP entry after verification
         await OTP.deleteOne({ email, otp });
+        
 
         res.status(200).json({ message: 'Email verified and user account created successfully' });
     } catch (error) {

@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     
-    "email": "stes21sssstsddsd@gmail.com",
+    "email": "stesdsd@gmail.com",
     "password": "letmeintest"
     
 }
@@ -29,6 +29,6 @@ POST http://localhost:3000/auth/verify-otp
 Content-Type: application/json
 
 {
-    "email": "te21sstsddsd@gmail.com",
-    "otp": "1s5n9k"
+    "email": "stesdsd@gmail.com",
+    "otp": "ji069n"
 }

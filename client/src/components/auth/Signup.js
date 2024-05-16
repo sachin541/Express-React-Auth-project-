@@ -1,27 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function Signup() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signup } = useAuth();
+  const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const result = await signup(username, password);
-      console.log(result);
-      if(result.error){
-        setError(result.error);
-      }else{
-        navigate('/verify-otp'); // Redirect to OTP verification page
-      }
-    } catch (err) {
-      setError(err.message); // Assuming the error object has a message property
-      console.error('Failed to signup', err);
+    const { error } = await signup(email, password);
+    if (error) {
+      setError(error);
+    } else {
+      navigate('/verify-otp'); // Redirect to OTP verification page
     }
   };
 
@@ -30,11 +24,11 @@ function Signup() {
       <h2>Signup</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <label>
-        Username:
+        Email:
         <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
       </label>
@@ -53,5 +47,6 @@ function Signup() {
 }
 
 export default Signup;
+
 
 
