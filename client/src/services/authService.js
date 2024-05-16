@@ -11,7 +11,6 @@ const authService = {
       localStorage.setItem('token', accessToken);
       return { user, error: null };
     } catch (error) {
-      console.log( error.response?.data?.message);
       const errorMessage = error.response?.data?.message || 'Login failed';
       return { user: null, error: errorMessage };
     }
@@ -20,12 +19,22 @@ const authService = {
   signup: async (email, password) => {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+      return { error: null };
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Signup failed';
+      return { error: errorMessage };
+    }
+  },
+
+  verifyOtp: async (email, otp) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp });
       const { accessToken, user } = response.data;
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', accessToken);
       return { user, error: null };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Signup failed';
+      const errorMessage = error.response?.data?.message || 'OTP verification failed';
       return { user: null, error: errorMessage };
     }
   },
