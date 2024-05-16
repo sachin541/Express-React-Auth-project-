@@ -143,7 +143,7 @@ async function verifyOtp(req, res) {
     }
 
     try {
-        const emailfound = await OTP.findOne({ email});
+        const emailfound = await OTP.findOne({ email });
 
         if (!emailfound) {
             return res.status(400).json({ message: 'Registration request not found' });
@@ -161,9 +161,19 @@ async function verifyOtp(req, res) {
 
         // Delete the OTP entry after verification
         await OTP.deleteOne({ email, otp });
-        
 
-        res.status(200).json({ message: 'Email verified and user account created successfully' });
+        // Generate JWT token
+        const accessToken = jwt.sign(
+            { userId: user._id, email: user.email, role: user.role },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '24h' } // Token expires in 24 hours
+        );
+
+        res.status(200).json({
+            message: 'Email verified and user account created successfully',
+            accessToken: accessToken,
+            user: { id: user._id, email: user.email, role: user.role }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
