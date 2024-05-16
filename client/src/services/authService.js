@@ -18,7 +18,7 @@ const authService = {
 
   signup: async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+      await axios.post(`${API_URL}/auth/register`, { email, password });
       return { error: null };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Signup failed';

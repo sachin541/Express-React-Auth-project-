@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext  } from 'react';
+import { useNavigate   } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 
 function Signup() {
@@ -15,7 +15,7 @@ function Signup() {
     if (error) {
       setError(error);
     } else {
-      navigate('/verify-otp'); // Redirect to OTP verification page
+      navigate('/verify-otp', { state: { email, password } }); // Pass email and password
     }
   };
 
@@ -47,6 +47,7 @@ function Signup() {
 }
 
 export default Signup;
+
 
 
 
