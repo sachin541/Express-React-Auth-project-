@@ -17,14 +17,12 @@ function Signup() {
       if(result.error){
         setError(result.error);
       }else{
-        navigate('/');
+        navigate('/verify-otp'); // Redirect to OTP verification page
       }
     } catch (err) {
       setError(err.message); // Assuming the error object has a message property
       console.error('Failed to signup', err);
     }
-    // if(!error) navigate('/');
-    
   };
 
   return (
@@ -50,10 +48,10 @@ function Signup() {
         />
       </label>
       <button type="submit">Signup</button>
-      
     </form>
   );
 }
 
 export default Signup;
+
 
