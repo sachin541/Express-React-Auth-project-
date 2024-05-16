@@ -6,37 +6,26 @@ const User = require('../models/userModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
 
-async function loginUser(req, res) {
-    const { email, password } = req.body;
+const sendOtpEmail = async (email, otp) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Email Verification OTP',
+        text: `Your OTP for email verification is: ${otp}. It is valid for 5 minutes.`,
+    };
 
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email or Password not defined" });
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
-    if (user == null) {
-        return res.status(400).json({ message: "Email not found" });
-    }
-
-    try {
-        if (await bcrypt.compare(password, user.password)) {
-            const accessToken = jwt.sign(
-                { userId: user._id, email: user.email, role: user.role },
-                process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '24h' } // Token expires in 24 hours
-            );
-            res.json({
-                accessToken: accessToken,
-                user: { id: user._id, email: user.email, role: user.role }
-            });
-        } else {
-            res.status(401).json({ message: "Incorrect Email or Password" });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send();
-    }
-}
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending OTP email:', error);
+                reject('Error sending OTP email');
+            } else {
+                console.log('OTP email sent:', info.response);
+                resolve('OTP sent to email. Please check your email to verify your account.');
+            }
+        });
+    });
+};
 
 async function requestRegister(req, res) {
     try {
@@ -88,24 +77,12 @@ async function requestRegister(req, res) {
             await existingOtp.save();
 
             // Send OTP email
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: normalizedEmail,
-                subject: 'Email Verification OTP',
-                text: `Your OTP for email verification is: ${existingOtp.otp}. It is valid for 5 minutes.`,
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error('Error sending OTP email:', error);
-                    return res.status(500).json({ message: 'Error sending OTP email' });
-                } else {
-                    console.log('OTP email sent:', info.response);
-                    return res.status(201).json({
-                        message: 'OTP sent to email. Please check your email to verify your account.',
-                    });
-                }
-            });
+            try {
+                const message = await sendOtpEmail(normalizedEmail, existingOtp.otp);
+                return res.status(201).json({ message });
+            } catch (error) {
+                return res.status(500).json({ message: error });
+            }
         } else {
             // Generate OTP
             const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
@@ -113,28 +90,48 @@ async function requestRegister(req, res) {
             await otpEntry.save();
 
             // Send OTP email
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: normalizedEmail,
-                subject: 'Email Verification OTP',
-                text: `Your OTP for email verification is: ${otp}. It is valid for 5 minutes.`,
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error('Error sending OTP email:', error);
-                    return res.status(500).json({ message: 'Error sending OTP email' });
-                } else {
-                    console.log('OTP email sent:', info.response);
-                    return res.status(201).json({
-                        message: 'OTP sent to email. Please check your email to verify your account.',
-                    });
-                }
-            });
+            try {
+                const message = await sendOtpEmail(normalizedEmail, otp);
+                return res.status(201).json({ message });
+            } catch (error) {
+                return res.status(500).json({ message: error });
+            }
         }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+async function loginUser(req, res) {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email or Password not defined" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (user == null) {
+        return res.status(400).json({ message: "Email not found" });
+    }
+
+    try {
+        if (await bcrypt.compare(password, user.password)) {
+            const accessToken = jwt.sign(
+                { userId: user._id, email: user.email, role: user.role },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '24h' } // Token expires in 24 hours
+            );
+            res.json({
+                accessToken: accessToken,
+                user: { id: user._id, email: user.email, role: user.role }
+            });
+        } else {
+            res.status(401).json({ message: "Incorrect Email or Password" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send();
     }
 }
 
@@ -149,7 +146,7 @@ async function verifyOtp(req, res) {
         const emailfound = await OTP.findOne({ email});
 
         if (!emailfound) {
-            return res.status(400).json({ message: 'Registration reuqest not found' });
+            return res.status(400).json({ message: 'Registration request not found' });
         }
 
         const otpEntry = await OTP.findOne({ email, otp });
@@ -177,5 +174,6 @@ module.exports = {
     requestRegister,
     verifyOtp
 };
+
 
 
