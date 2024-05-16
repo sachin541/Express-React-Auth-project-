@@ -1,0 +1,34 @@
+###
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    
+    "email": "stes21sssstsddsd@gmail.com",
+    "password": "letmeintest"
+    
+}
+
+
+###
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "hello762@gmail.com",
+    "password": "sachin12345678"
+}
+
+###
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYTlhMGViMjU5NmY3YTI1ZDg1NGIiLCJlbWFpbCI6InNhY2hpbjI1NDFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTU1NzkyOTYsImV4cCI6MTcxNTY2NTY5Nn0.9mdXCySuZahkVXNxJ0Q18uj0uM7i18Kra-Yva6gnoss
+
+
+###
+POST http://localhost:3000/auth/verify-otp
+Content-Type: application/json
+
+{
+    "email": "te21sstsddsd@gmail.com",
+    "otp": "1s5n9k"
+}

@@ -1,0 +1,19 @@
+### get all users (must be logged in as admin) 
+GET http://localhost:3000/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYWM2Yjk2OTlkZTljMDZlYzIzZTQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxNTU4MDU5OX0.9WP61F9KdjAYha8RnV4QsHy6usmGeRjSUw0Q8SRe8p4
+
+### Log in as admin
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "adminletmein"
+}
+
+### get single user from (must be logged in as admin) 
+GET http://localhost:3000/admin/664184df0d62847fb1c3406c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYWM2Yjk2OTlkZTljMDZlYzIzZTQiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxNTU4NDQ2Nn0.bylZnVMfKMgxpeEKPteF_QBKi6RWvItIOOXoZpoSWgI
+
+
+

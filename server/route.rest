@@ -1,0 +1,35 @@
+GET http://localhost:3000/test
+
+###
+
+GET http://localhost:3000/test?name=example
+
+###
+
+GET http://localhost:3000/test/663eeb866bf2124cc40cf613
+
+###
+POST http://localhost:3000/test
+Content-Type: application/json
+
+{
+    "name" : "example",
+    "stoc" : "Mychannel"
+
+}
+
+###
+
+DELETE http://localhost:3000/test/663eeb866bf2124cc40cf613
+
+
+###
+
+PATCH http://localhost:3000/test/663eebdb6bf2124cc40cf616
+Content-Type: application/json
+
+{
+    "name" : "new2Name"
+    
+
+}
